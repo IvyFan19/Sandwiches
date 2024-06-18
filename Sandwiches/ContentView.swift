@@ -8,17 +8,44 @@
 import SwiftUI
 
 struct ContentView: View {
+    @ObservedObject var store : SandwichStore
+    //var sandwiches: [Sandwich] = []
+    // @StateObject private var store = SandwichStore()
+    
     var body: some View {
-        VStack {
-            Image(systemName: "globe")
-                .imageScale(.large)
-                .foregroundStyle(.tint)
-            Text("Hello, world!")
+        NavigationView {
+            List{ // create another container
+                ForEach(store.sandwiches) { sandwich in
+                    SandwichCell(sandwich: sandwich)
+                }
+                HStack {
+                    Spacer()
+                    Text("\(store.sandwiches.count) Sandwiches")
+                        .foregroundColor(.secondary)
+                    Spacer()
+                }
+            }
         }
-        .padding()
     }
 }
 
 #Preview {
-    ContentView()
+    ContentView(store: testStore)
+}
+
+struct SandwichCell: View {
+    var sandwich: Sandwich
+    var body: some View {
+        NavigationLink(destination: SandwichDetails(sandwich: sandwich)){
+            HStack {
+                Image(sandwich.thumbnailName).cornerRadius(8.0)
+                VStack(alignment: .leading) {
+                    Text(sandwich.name)
+                    Text("\(sandwich.ingredientCount) ingredients")
+                        .font(.subheadline)
+                        .foregroundColor(.secondary)
+                }
+            }
+        }.navigationTitle("Sandwiches")
+    }
 }
